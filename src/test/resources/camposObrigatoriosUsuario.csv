@@ -1,0 +1,4 @@
+Id, Nome, Emai, Senha, Mensagem
+1, null, user@mail.com, 12345678, Nome é obrigatório
+1, Usuário Válido, null, 12345678, Email é obrigatório
+1, Usuário Válido, user@mail.com, null, Senha é obrigatória
