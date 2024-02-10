@@ -1,5 +1,7 @@
 package br.com.gabrielsmm.barriga.service;
 
+import java.util.Optional;
+
 import br.com.gabrielsmm.barriga.domain.Usuario;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
 import br.com.gabrielsmm.barriga.service.repositories.UsuarioRepository;
@@ -17,6 +19,10 @@ public class UsuarioService {
 			throw new ValidationException(String.format("Usuário %s já cadastrado!", usuario.email()));
 		});
 		return repository.salvar(usuario);
+	}
+	
+	public Optional<Usuario> getUserByEmail(String email) {
+		return repository.getUserByEmail(email);
 	}
 	
 }
