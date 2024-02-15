@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.gabrielsmm.barriga.domain.Usuario;
+import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
 import br.com.gabrielsmm.barriga.service.repositories.UsuarioRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,7 +27,7 @@ public class UsuarioServiceTest {
 	@InjectMocks
 	private UsuarioService service;
 	
-//  Desncessário ao usar @ExtendWith
+//  Desnecessário ao usar @ExtendWith
 //	@BeforeEach
 //	public void setup() {
 //		repository = Mockito.mock(UsuarioRepository.class); // Versão inicial
@@ -87,6 +88,18 @@ public class UsuarioServiceTest {
 		Assertions.assertNotNull(savedUser.id());
 		verify(repository).getUserByEmail(userToSave.email()); // Verificando se houve a chamada
 		verify(repository).salvar(userToSave);
+	}
+	
+	@Test
+	public void deveRejeitarUsuarioExistente() {
+		Usuario userToSave = umUsuario().comId(null).agora();
+		
+		when(repository.getUserByEmail(userToSave.email())).thenReturn(Optional.of(umUsuario().agora()));
+		
+		String errorMessage = Assertions.assertThrows(ValidationException.class, () -> service.salvar(userToSave)).getMessage();
+		Assertions.assertTrue(errorMessage.endsWith("já cadastrado!"));
+		
+		verify(repository, Mockito.never()).salvar(userToSave);
 	}
 	
 }
