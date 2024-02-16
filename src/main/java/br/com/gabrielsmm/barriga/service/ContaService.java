@@ -1,5 +1,6 @@
 package br.com.gabrielsmm.barriga.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import br.com.gabrielsmm.barriga.domain.Conta;
@@ -24,12 +25,12 @@ public class ContaService {
 			if (c.nome().equalsIgnoreCase(conta.nome())) 
 				throw new ValidationException("Usuário já possui uma conta com este nome!");
 		});
-		Conta contaPersistida = repository.salvar(conta);
+		Conta contaPersistida = repository.salvar(new Conta(conta.id(), conta.nome() + LocalDateTime.now(), conta.usuario()));
 		try {
 			event.dispatch(contaPersistida, EventType.CREATED);
 		} catch (Exception e) {
 			repository.delete(contaPersistida);
-			throw new RuntimeException("Falha na crição da conta, tente novamente");
+			throw new RuntimeException("Falha na criação da conta, tente novamente");
 		}
 		return contaPersistida;
 	}

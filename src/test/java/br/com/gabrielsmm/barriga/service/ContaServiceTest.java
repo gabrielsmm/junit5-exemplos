@@ -36,14 +36,14 @@ public class ContaServiceTest {
 	public void deveSalvarPrimeiraContaComSucesso() throws Exception {
 		Conta contaToSave = umaConta().comId(null).agora();
 		
-		when(repository.salvar(contaToSave)).thenReturn(umaConta().agora());
+		when(repository.salvar(Mockito.any(Conta.class))).thenReturn(umaConta().agora());
 		
 		Mockito.doNothing().when(event).dispatch(umaConta().agora(), EventType.CREATED); // Validando método void
 		
 		Conta savedConta = service.salvar(contaToSave);
 		
 		Assertions.assertNotNull(savedConta.id());
-		verify(repository).salvar(savedConta);
+		verify(repository).salvar(Mockito.any(Conta.class));
 	}
 	
 	@Test
@@ -53,12 +53,12 @@ public class ContaServiceTest {
 		when(repository.getContasByUsuario(contaToSave.usuario().id()))
 		.thenReturn(Arrays.asList(umaConta().comNome("Outra conta").agora()));
 		
-		when(repository.salvar(contaToSave)).thenReturn(umaConta().agora());
+		when(repository.salvar(Mockito.any(Conta.class))).thenReturn(umaConta().agora());
 		
 		Conta savedConta = service.salvar(contaToSave);
 		
 		Assertions.assertNotNull(savedConta.id());
-		verify(repository).salvar(savedConta);
+		verify(repository).salvar(Mockito.any(Conta.class));
 	}
 	
 	@Test
@@ -79,13 +79,13 @@ public class ContaServiceTest {
 		Conta contaToSave = umaConta().comId(null).agora();
 		Conta contaSalva = umaConta().agora();
 		
-		when(repository.salvar(contaToSave)).thenReturn(contaSalva);
+		when(repository.salvar(Mockito.any(Conta.class))).thenReturn(contaSalva);
 		
 		Mockito.doThrow(new Exception("Falha catastrófica"))
 		.when(event).dispatch(contaSalva, EventType.CREATED);
 		
 		String errorMessage = Assertions.assertThrows(Exception.class, () -> service.salvar(contaToSave)).getMessage();
-		Assertions.assertEquals("Falha na crição da conta, tente novamente", errorMessage);
+		Assertions.assertEquals("Falha na criação da conta, tente novamente", errorMessage);
 		
 		verify(repository).delete(contaSalva);
 	}
