@@ -9,6 +9,8 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,6 +34,9 @@ public class ContaServiceTest {
 	@InjectMocks
 	private ContaService service;
 	
+	@Captor
+	private ArgumentCaptor<Conta> contaCaptor;
+	
 	@Test
 	public void deveSalvarPrimeiraContaComSucesso() throws Exception {
 		Conta contaToSave = umaConta().comId(null).agora();
@@ -43,7 +48,9 @@ public class ContaServiceTest {
 		Conta savedConta = service.salvar(contaToSave);
 		
 		Assertions.assertNotNull(savedConta.id());
-		verify(repository).salvar(Mockito.any(Conta.class));
+		verify(repository).salvar(contaCaptor.capture());
+		Assertions.assertNull(contaCaptor.getValue().id());
+		Assertions.assertTrue(contaCaptor.getValue().nome().startsWith("Conta Válida"));
 	}
 	
 	@Test
