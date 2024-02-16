@@ -9,4 +9,6 @@ public interface ContaRepository {
 	Conta salvar(Conta conta);
 	
 	List<Conta> getContasByUsuario(Long usuarioId);
+	
+	void delete(Conta conta);
 }

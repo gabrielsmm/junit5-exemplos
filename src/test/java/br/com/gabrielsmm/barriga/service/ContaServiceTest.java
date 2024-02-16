@@ -16,6 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.gabrielsmm.barriga.domain.Conta;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
+import br.com.gabrielsmm.barriga.service.external.ContaEvent;
+import br.com.gabrielsmm.barriga.service.external.ContaEvent.EventType;
 import br.com.gabrielsmm.barriga.service.repositories.ContaRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,14 +26,19 @@ public class ContaServiceTest {
 	@Mock
 	private ContaRepository repository;
 	
+	@Mock
+	private ContaEvent event;
+	
 	@InjectMocks
 	private ContaService service;
 	
 	@Test
-	public void deveSalvarPrimeiraContaComSucesso() {
+	public void deveSalvarPrimeiraContaComSucesso() throws Exception {
 		Conta contaToSave = umaConta().comId(null).agora();
 		
 		when(repository.salvar(contaToSave)).thenReturn(umaConta().agora());
+		
+		Mockito.doNothing().when(event).dispatch(umaConta().agora(), EventType.CREATED); // Validando método void
 		
 		Conta savedConta = service.salvar(contaToSave);
 		
@@ -65,6 +72,22 @@ public class ContaServiceTest {
 		Assertions.assertEquals("Usuário já possui uma conta com este nome!", errorMessage);
 		
 		verify(repository, Mockito.never()).salvar(contaToSave);
+	}
+	
+	@Test
+	public void naoDeveManterContaSemEvento() throws Exception {
+		Conta contaToSave = umaConta().comId(null).agora();
+		Conta contaSalva = umaConta().agora();
+		
+		when(repository.salvar(contaToSave)).thenReturn(contaSalva);
+		
+		Mockito.doThrow(new Exception("Falha catastrófica"))
+		.when(event).dispatch(contaSalva, EventType.CREATED);
+		
+		String errorMessage = Assertions.assertThrows(Exception.class, () -> service.salvar(contaToSave)).getMessage();
+		Assertions.assertEquals("Falha na crição da conta, tente novamente", errorMessage);
+		
+		verify(repository).delete(contaSalva);
 	}
 	
 }
