@@ -82,5 +82,11 @@ public class Transacao {
 				&& Objects.equals(descricao, other.descricao) && Objects.equals(status, other.status)
 				&& Objects.equals(valor, other.valor);
 	}
+
+	@Override
+	public String toString() {
+		return "Transacao [id=" + id + ", descricao=" + descricao + ", valor=" + valor + ", conta=" + conta + ", data="
+				+ data + ", status=" + status + "]";
+	}
 	
 }
