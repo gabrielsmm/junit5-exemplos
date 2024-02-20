@@ -3,10 +3,11 @@ package br.com.gabrielsmm.barriga.service;
 import static br.com.gabrielsmm.barriga.domain.builders.TransacaoBuilder.umaTransacao;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,12 +15,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedConstruction;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.gabrielsmm.barriga.domain.Transacao;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
+import br.com.gabrielsmm.barriga.service.external.ClockService;
 import br.com.gabrielsmm.barriga.service.repositories.TransacaoDao;
 
 //@EnabledIf(value = "isHoraValida")
@@ -29,6 +29,9 @@ public class TransacaoServiceTest {
 	@Mock
 	private TransacaoDao dao;
 	
+	@Mock
+	private ClockService clock;
+	
 	@InjectMocks
 	private TransacaoService service;
 	
@@ -37,43 +40,34 @@ public class TransacaoServiceTest {
 //		Assumptions.assumeTrue(LocalDateTime.now().getHour() < 20); // Evitar execução dos testes caso seja false
 //	}
 	
+	@BeforeEach
+	public void setup() {
+		when(clock.getCurrentTime()).thenReturn(LocalDateTime.of(2024, 2, 19, 4, 30, 28));
+	}
+	
 	@Test
 	public void deveSalvarTransacaoValida() {	
 		Transacao transacaoParaSalvar = umaTransacao().comId(null).agora();
 		
 		when(dao.salvar(transacaoParaSalvar)).thenReturn(umaTransacao().agora());
-		
-//		LocalDateTime dataDesejada = LocalDateTime.of(2024, 2, 19, 4, 30, 28);
-		System.out.println(new Date().getHours());
-		
-		// Mockando LocalDateTime
-		try (MockedConstruction<Date> date = Mockito.mockConstruction(Date.class, 
-				(mock, context) -> { when(mock.getHours()).thenReturn(4); }
-			)) {
-//			ldt.when(() -> LocalDateTime.now()).thenReturn(dataDesejada);
 			
-			System.out.println(new Date().getHours());
-			
-			Transacao transacaoSalva = service.salvar(transacaoParaSalvar);
-			Assertions.assertEquals(umaTransacao().agora(), transacaoSalva);
-			Assertions.assertAll("Transação",
-					() -> Assertions.assertEquals(1L, transacaoSalva.getId()),
-					() -> Assertions.assertEquals("Transação Válida", transacaoSalva.getDescricao()),
-					() -> {
-						Assertions.assertAll("Conta", 
-								() -> Assertions.assertEquals("Conta Válida", transacaoSalva.getConta().nome()),
-								() -> {
-									Assertions.assertAll("Usuário", 
-											() -> Assertions.assertEquals("Usuário Válido", transacaoSalva.getConta().usuario().nome()),
-											() -> Assertions.assertEquals("12345678", transacaoSalva.getConta().usuario().senha())
-									);
-								}
-						);
-					}
-			);
-//			ldt.verify(() -> LocalDateTime.now(), Mockito.atLeastOnce());
-			Assertions.assertEquals(2, date.constructed().size());
-		}
+		Transacao transacaoSalva = service.salvar(transacaoParaSalvar);
+		Assertions.assertEquals(umaTransacao().agora(), transacaoSalva);
+		Assertions.assertAll("Transação",
+				() -> Assertions.assertEquals(1L, transacaoSalva.getId()),
+				() -> Assertions.assertEquals("Transação Válida", transacaoSalva.getDescricao()),
+				() -> {
+					Assertions.assertAll("Conta", 
+							() -> Assertions.assertEquals("Conta Válida", transacaoSalva.getConta().nome()),
+							() -> {
+								Assertions.assertAll("Usuário", 
+										() -> Assertions.assertEquals("Usuário Válido", transacaoSalva.getConta().usuario().nome()),
+										() -> Assertions.assertEquals("12345678", transacaoSalva.getConta().usuario().senha())
+								);
+							}
+					);
+				}
+		);
 	}
 	
 	@ParameterizedTest(name = "{1}")
