@@ -1,5 +1,7 @@
 package br.com.gabrielsmm.barriga.service;
 
+import java.time.LocalDateTime;
+
 import br.com.gabrielsmm.barriga.domain.Transacao;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
 import br.com.gabrielsmm.barriga.service.repositories.TransacaoDao;
@@ -19,6 +21,8 @@ public class TransacaoService {
 		if (transacao.getData() == null) throw new ValidationException("Data inexistente");
 		if (transacao.getConta() == null) throw new ValidationException("Conta inexistente");
 		if (transacao.getStatus() == null) transacao.setStatus(false);
+		
+		if (LocalDateTime.now().getHour() >= 20) throw new RuntimeException("Tente novamente amanhã");
 	}
 	
 }
