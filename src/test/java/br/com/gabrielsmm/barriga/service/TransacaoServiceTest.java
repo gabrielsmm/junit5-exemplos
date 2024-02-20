@@ -3,7 +3,7 @@ package br.com.gabrielsmm.barriga.service;
 import static br.com.gabrielsmm.barriga.domain.builders.TransacaoBuilder.umaTransacao;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
+import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -43,11 +43,16 @@ public class TransacaoServiceTest {
 		
 		when(dao.salvar(transacaoParaSalvar)).thenReturn(umaTransacao().agora());
 		
-		LocalDateTime dataDesejada = LocalDateTime.of(2024, 2, 19, 4, 30, 28);
+//		LocalDateTime dataDesejada = LocalDateTime.of(2024, 2, 19, 4, 30, 28);
+		System.out.println(new Date().getHours());
 		
 		// Mockando LocalDateTime
-		try (MockedStatic<LocalDateTime> ldt = Mockito.mockStatic(LocalDateTime.class)) {
-			ldt.when(() -> LocalDateTime.now()).thenReturn(dataDesejada);
+		try (MockedConstruction<Date> date = Mockito.mockConstruction(Date.class, 
+				(mock, context) -> { when(mock.getHours()).thenReturn(4); }
+			)) {
+//			ldt.when(() -> LocalDateTime.now()).thenReturn(dataDesejada);
+			
+			System.out.println(new Date().getHours());
 			
 			Transacao transacaoSalva = service.salvar(transacaoParaSalvar);
 			Assertions.assertEquals(umaTransacao().agora(), transacaoSalva);
@@ -66,7 +71,8 @@ public class TransacaoServiceTest {
 						);
 					}
 			);
-			ldt.verify(() -> LocalDateTime.now(), Mockito.atLeastOnce());
+//			ldt.verify(() -> LocalDateTime.now(), Mockito.atLeastOnce());
+			Assertions.assertEquals(2, date.constructed().size());
 		}
 	}
 	
