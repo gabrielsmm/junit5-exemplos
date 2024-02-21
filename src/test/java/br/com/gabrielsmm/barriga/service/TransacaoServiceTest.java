@@ -15,11 +15,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.gabrielsmm.barriga.domain.Transacao;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
-import br.com.gabrielsmm.barriga.service.external.ClockService;
 import br.com.gabrielsmm.barriga.service.repositories.TransacaoDao;
 
 //@EnabledIf(value = "isHoraValida")
@@ -29,10 +29,11 @@ public class TransacaoServiceTest {
 	@Mock
 	private TransacaoDao dao;
 	
-	@Mock
-	private ClockService clock;
+//	@Mock
+//	private ClockService clock;
 	
 	@InjectMocks
+	@Spy
 	private TransacaoService service;
 	
 //	@BeforeEach
@@ -42,7 +43,8 @@ public class TransacaoServiceTest {
 	
 	@BeforeEach
 	public void setup() {
-		when(clock.getCurrentTime()).thenReturn(LocalDateTime.of(2024, 2, 19, 4, 30, 28));
+//		when(clock.getCurrentTime()).thenReturn(LocalDateTime.of(2024, 2, 19, 4, 30, 28));
+		when(service.getTime()).thenReturn(LocalDateTime.of(2024, 2, 19, 4, 30, 28));
 	}
 	
 	@Test
