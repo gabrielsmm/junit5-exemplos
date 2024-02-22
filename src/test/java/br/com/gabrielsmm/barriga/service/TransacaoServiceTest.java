@@ -3,6 +3,8 @@ package br.com.gabrielsmm.barriga.service;
 import static br.com.gabrielsmm.barriga.domain.builders.TransacaoBuilder.umaTransacao;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
@@ -17,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import br.com.gabrielsmm.barriga.domain.Transacao;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
@@ -24,6 +28,7 @@ import br.com.gabrielsmm.barriga.service.repositories.TransacaoDao;
 
 //@EnabledIf(value = "isHoraValida")
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TransacaoServiceTest {
 
 	@Mock
@@ -86,6 +91,17 @@ public class TransacaoServiceTest {
 				Arguments.of(umaTransacao().comData(null).agora(), "Data inexistente"),
 				Arguments.of(umaTransacao().comConta(null).agora(), "Conta inexistente")
 		);
+	}
+	
+	@Test
+	public void deveRejeitarTransacaoSemValor() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Transacao transacao = umaTransacao().comValor(null).agora();
+		
+		Method metodo = TransacaoService.class.getDeclaredMethod("validarCamposObrigatorios", Transacao.class);
+		metodo.setAccessible(true);
+		Exception ex = Assertions.assertThrows(Exception.class, 
+											  () -> metodo.invoke(new TransacaoService(), transacao));
+		Assertions.assertEquals("Valor inexistente", ex.getCause().getMessage());
 	}
 	
 //	public static boolean isHoraValida() {

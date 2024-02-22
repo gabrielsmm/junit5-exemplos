@@ -11,13 +11,14 @@ public class TransacaoService {
 	private TransacaoDao dao;
 	
 	public Transacao salvar(Transacao transacao) {
-		validar(transacao);
+		if (getTime().getHour() >= 20) throw new RuntimeException("Tente novamente amanhã");
+		
+		validarCamposObrigatorios(transacao);
+		
 		return dao.salvar(transacao);
 	}
 
-	private void validar(Transacao transacao) {
-		if (getTime().getHour() >= 20) throw new RuntimeException("Tente novamente amanhã");
-		
+	private void validarCamposObrigatorios(Transacao transacao) {
 		if (transacao.getDescricao() == null) throw new ValidationException("Descrição inexistente");
 		if (transacao.getValor() == null) throw new ValidationException("Valor inexistente");
 		if (transacao.getData() == null) throw new ValidationException("Data inexistente");
