@@ -15,8 +15,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -40,6 +43,9 @@ public class TransacaoServiceTest {
 	@InjectMocks
 	@Spy
 	private TransacaoService service;
+	
+	@Captor
+	private ArgumentCaptor<Transacao> captor;
 	
 //	@BeforeEach
 //	public void checkTime() {
@@ -102,6 +108,24 @@ public class TransacaoServiceTest {
 		Exception ex = Assertions.assertThrows(Exception.class, 
 											  () -> metodo.invoke(new TransacaoService(), transacao));
 		Assertions.assertEquals("Valor inexistente", ex.getCause().getMessage());
+	}
+	
+	@Test
+	public void deveRejeitarTransacaoTardeDaNoite() {	
+//		Mockito.reset(service);
+		when(service.getTime()).thenReturn(LocalDateTime.of(2024, 2, 19, 21, 30, 28));
+		String errorMessage = Assertions.assertThrows(RuntimeException.class, () -> service.salvar(umaTransacao().agora())).getMessage();
+		Assertions.assertEquals("Tente novamente amanhã", errorMessage);
+	}
+	
+	@Test
+	public void deveSalvarTransacaoComoPendentePorPadrao() {
+		Transacao transacao = umaTransacao().comStatus(null).agora();
+		service.salvar(transacao);
+		
+		Mockito.verify(dao).salvar(captor.capture());
+		Transacao transacaoValidada = captor.getValue();
+		Assertions.assertFalse(transacaoValidada.getStatus());
 	}
 	
 //	public static boolean isHoraValida() {
