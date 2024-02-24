@@ -5,6 +5,7 @@ import static br.com.gabrielsmm.barriga.domain.builders.UsuarioBuilder.umUsuario
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
@@ -12,6 +13,7 @@ import br.com.gabrielsmm.barriga.domain.Usuario;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
 import br.com.gabrielsmm.barriga.service.UsuarioService;
 
+@Tag("infra")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserServiceComUserMemoryRepositoryTest {
 

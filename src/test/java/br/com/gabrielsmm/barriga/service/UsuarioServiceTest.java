@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,8 @@ import br.com.gabrielsmm.barriga.domain.Usuario;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
 import br.com.gabrielsmm.barriga.service.repositories.UsuarioRepository;
 
+@Tag("service")
+@Tag("usuario")
 @ExtendWith(MockitoExtension.class)
 public class UsuarioServiceTest {
 	

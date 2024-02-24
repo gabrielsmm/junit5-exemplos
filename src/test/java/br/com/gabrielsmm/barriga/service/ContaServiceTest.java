@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,6 +23,8 @@ import br.com.gabrielsmm.barriga.service.external.ContaEvent;
 import br.com.gabrielsmm.barriga.service.external.ContaEvent.EventType;
 import br.com.gabrielsmm.barriga.service.repositories.ContaRepository;
 
+@Tag("service")
+@Tag("conta")
 @ExtendWith(MockitoExtension.class)
 public class ContaServiceTest {
 

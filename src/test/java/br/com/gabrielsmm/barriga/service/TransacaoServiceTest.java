@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,6 +30,8 @@ import br.com.gabrielsmm.barriga.domain.Transacao;
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
 import br.com.gabrielsmm.barriga.service.repositories.TransacaoDao;
 
+@Tag("service")
+@Tag("transacao")
 //@EnabledIf(value = "isHoraValida")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)

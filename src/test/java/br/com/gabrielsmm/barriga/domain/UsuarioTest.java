@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -12,6 +13,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import br.com.gabrielsmm.barriga.domain.exceptions.ValidationException;
 
+@Tag("dominio")
+@Tag("usuario")
 @DisplayName("Domínio do usuário")
 public class UsuarioTest {
 	
